@@ -13,8 +13,9 @@ var config =
     }
 };
 
-var vidas = 3;
-var score = 0, gameOver = false, scoreText;
+var vidas = [];
+var numVidas = 3
+var score = 0, gameOver = false, scoreText, choque;
 var player; //jugador que sera la nave
 var balas = []; //arreglo de balas que estaran en constante disparo
 var fire_enemy = []; //arreglo de fuego que lanza el enemigos
@@ -22,7 +23,7 @@ var fire_enemy = []; //arreglo de fuego que lanza el enemigos
 var enemy = {
     enemy_el: null, //aqui se guarda el objeto que obtiene la creacion del enemigo
     x: {
-        x_max: (window.innerWidth - 150), //tam pantalla -150px
+        x_max: (window.innerWidth - 100), //tam pantalla -150px
         x_min: (window.innerHeight * 3 / 4) //3/4 de pantalla
     },
     y: {
@@ -39,10 +40,12 @@ var game = new Phaser.Game(config);
 function preload() {
     // Here we're gonna preload all images
     this.load.image('nave', '../media/nave.png');
-    this.load.image('fondo', '../media/fondo.webp');
+    this.load.image('fondo', '../media/fondo.jpg');
     this.load.image('bala', './media/bullet.png');
     this.load.image('enemy', '../media/enemigo.png');
-    this.load.image('fire', '../media/fire.png')
+    this.load.image('fire', '../media/fire.png');
+    this.load.image('vida', '../media/vidas.png');
+    this.load.image('choque', '../media/choque.png')
 }
 
 function create() {
@@ -103,13 +106,20 @@ function create() {
     //creamos la entrada de eventos desde el teclado
     cursors = this.input.keyboard.createCursorKeys();
 
+    vidas = [
+        this.add.image(window.innerWidth - 40, 40, 'vida'),
+        this.add.image(window.innerWidth - 100, 40, 'vida'),
+        this.add.image(window.innerWidth - 160, 40, 'vida')
+    ];
+
     //agregamos el score y el numero de vidas
-    scoreText = this.add.text(16, 16, 'Score: 0 Vidas: 0', { fontSize: '32px', fill: 'white' });
+    scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: 'white' });
 }
 
 
 function update() {
     if (gameOver) return; //si perdio termina ejecucion
+    if(choque) choque.destroy();
 
     //modificaremos la posicion de las balas, a su vez revisamos si se necesita eliminar
     // despues revisaremos aqui mismo si colisiono con el enemigo
@@ -118,14 +128,18 @@ function update() {
 
         //revisamos que haya colisiones y en caso de que si elimina la bala
         // de lo contrario revisa si no ha salido del recuadro
-        if (checkCollision(bala, enemy.enemy_el)) {
+        if (checkCollision(bala, enemy.enemy_el)) {    
             score += 10;
-            scoreText.setText(`Score: ${score} Vidas: ${vidas}`);
-
+            scoreText.setText(`Score: ${score}`);
+            
             enemy.vida -= 2; //disminuye la vida del enemigo cada que tenga una colision
             enemy.velocidad_mov += .1; //aumenta velocidad de movimiento
             bala.destroy(); //se elimina la bala que impacto
             balas.splice(index, 1); //se elimina del arreglo la bala para que no pase por el foreach
+            
+            choque = this.add.image(enemy.enemy_el.x, enemy.enemy_el.y, 'choque');
+
+
         } else if (bala.x > window.innerWidth) { //Revisa si la bala sobrepaso el limite 
             bala.destroy(); // Elimina la bala del juego
             balas.splice(index, 1); //eliminamos la bala del arreglo
@@ -138,11 +152,12 @@ function update() {
         //en caso de colision con el jugador le quitamos una vida y eliminamos 
         // lo que disparo el enemigo
         if (checkCollision(elem, player)) {
-            vidas--; //quitamos una vida
-            scoreText.setText(`Score: ${score} Vidas: ${vidas}`);
+            numVidas--;
+            vidas[vidas.length - 1].destroy();
+            vidas.pop(); //quitamos una vida
+            scoreText.setText(`Score: ${score}`);
             elem.destroy(); //se elimina el elemento que impacto
             fire_enemy.splice(index, 1); //eliminamos el elemento de el arreglo
-
         } else if (elem.x < 0) { // Revisa si el elemento salio de la zona para eliminarlo
             elem.destroy(); //se elimina el elemento que impacto
             fire_enemy.splice(index, 1); //eliminamos el elemento de el arreglo
@@ -184,7 +199,7 @@ function update() {
     }
 
     //por ultimo revisamos que no haya perdido, cuando sea 0 esta detendra la ejecucion
-    if(!vidas) gameOver = true;
+    if(!numVidas) gameOver = true;
 }
 
 
@@ -197,4 +212,10 @@ function checkCollision(obj1, obj2) {
     // console.log("Rect2:", rect2);
 
     return Phaser.Geom.Intersects.RectangleToRectangle(rect1, rect2);
+}
+
+//Función que recupera los datos enviados de la escena pasada y las suma a las estadisticas de esta escena
+// y los guarda en la tabla de registros de los que jugaron
+function getData_LS(){
+    
 }
