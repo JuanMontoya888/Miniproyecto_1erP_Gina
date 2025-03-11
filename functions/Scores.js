@@ -7,7 +7,7 @@ registerArray.forEach((element, index)=> {
         <td>${index}</td>
         <td>${element.name}</td>
         <td>${element.score}</td>
-    `; // Creamos un boton que eliminara el registro que fue introducido
+    `;
 
     tableBody.appendChild(row);
 
