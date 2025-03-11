@@ -220,7 +220,7 @@ function saveData_LS(){
 }
 
 function saveScore_LS(){
-    registerArray = JSON.parse(localStorage.getItem('scores')) || []; //obtenemos la lista de todos los registros
+    var registerArray = JSON.parse(localStorage.getItem('scores')) || []; //obtenemos la lista de todos los registros
     var data_user = {
         name: name,
         score: score

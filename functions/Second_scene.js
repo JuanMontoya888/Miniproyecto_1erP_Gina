@@ -217,9 +217,9 @@ function checkCollision(obj1, obj2) {
 //Función que recupera los datos enviados de la escena pasada y las suma a las estadisticas de esta escena
 // y los guarda en la tabla de registros de los que jugaron
 function saveData_LS(){
-    recent_data = JSON.parse(localStorage.getItem('recent_data')); //obtenemos el JSON y lo convertimos a objeto
+    var recent_data = JSON.parse(localStorage.getItem('recent_data')); //obtenemos el JSON y lo convertimos a objeto
     localStorage.setItem('recent_data', ''); //vaciamos el campo en el localStorage que fue usado en la primera escena
-    registerArray = JSON.parse(localStorage.getItem('scores')); //obtenemos la lista de todos los registros
+    var registerArray = JSON.parse(localStorage.getItem('scores')); //obtenemos la lista de todos los registros
 
 
     //aqui creamos el registro con los datos de la escena anterior y esta escena, el score y el nombre
