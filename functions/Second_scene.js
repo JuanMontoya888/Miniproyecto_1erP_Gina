@@ -59,8 +59,8 @@ function create() {
 
     //crearemos el enemigo con coordenadas aleatorias esto llamando a una funcion la cual me retornara
     // dos numeros aleatorios en 'X' y 'Y'
-    let X = Math.floor(Math.random() * (enemy.x.x_max - enemy.x.x_min) + enemy.x.x_min);
-    let Y = Math.floor(Math.random() * (enemy.y.y_max - enemy.y.y_min) + enemy.y.y_min);
+    let X = Phaser.Math.Between(enemy.x.x_min, enemy.x.x_max);
+    let Y =  Phaser.Math.Between(enemy.y.y_min, enemy.y.y_max);
     //console.log(X + ' ' + Y);
     enemy.enemy_el = this.add.image(X, Y, 'enemy'); //creamos el enemigo en coordenadas aleatorias
 
@@ -89,11 +89,11 @@ function create() {
         callback:
             () => {
                 //creamos nuevas posiciones random para que se mueva el enemigo cada 2s
-                let X = Math.floor(Math.random() * (enemy.x.x_max - enemy.x.x_min) + enemy.x.x_min);
-                let Y = Math.floor(Math.random() * (enemy.y.y_max - enemy.y.y_min) + enemy.y.y_min);
+                let X = Phaser.Math.Between(enemy.x.x_min, enemy.x.x_max);
+                let Y =  Phaser.Math.Between(enemy.y.y_min, enemy.y.y_max);
 
                 enemy.new_cor = { x: X, y: Y };
-                console.log(enemy.new_cor);
+                //console.log(enemy.new_cor);
 
                 //agregamos un nuevo elemento a el arreglo para despues recorrerlo
                 fire_enemy.push(this.add.image(enemy.enemy_el.x, enemy.enemy_el.y, 'fire'));
@@ -118,8 +118,8 @@ function create() {
 
 
 function update() {
-    if (gameOver) return; //si perdio termina ejecucion
-    if(choque) choque.destroy();
+    if (gameOver) saveData_LS(); //si perdio termina ejecucion
+    if (choque) choque.destroy();
 
     //modificaremos la posicion de las balas, a su vez revisamos si se necesita eliminar
     // despues revisaremos aqui mismo si colisiono con el enemigo
@@ -216,6 +216,29 @@ function checkCollision(obj1, obj2) {
 
 //Función que recupera los datos enviados de la escena pasada y las suma a las estadisticas de esta escena
 // y los guarda en la tabla de registros de los que jugaron
-function getData_LS(){
-    
+function saveData_LS(){
+    recent_data = JSON.parse(localStorage.getItem('recent_data')); //obtenemos el JSON y lo convertimos a objeto
+    localStorage.setItem('recent_data', ''); //vaciamos el campo en el localStorage que fue usado en la primera escena
+    registerArray = JSON.parse(localStorage.getItem('scores')); //obtenemos la lista de todos los registros
+
+
+    //aqui creamos el registro con los datos de la escena anterior y esta escena, el score y el nombre
+    var data_user = {
+        name: recent_data.name,
+        score: score + recent_data.score
+    };
+
+    //si encuentra el registro con el mismo nombre y si es mayor el score lo eliminara, sino solo lo actualizara
+    if(registerArray.find((element) => element.name === data_user.name)){
+        registerArray.forEach((element, index) => {
+            if(element.name === data_user.name) {
+                if(element.score > data_user.score) data_user = registerArray.splice(index, 1) //eliminamos el registro
+                else registerArray.splice(index, 1)
+            }
+        });
+    }
+
+
+    registerArray.push(data_user); //guardamos en los registros el nuevo registro hasta el inicio
+    localStorage.setItem('scores', JSON.stringify(registerArray)); //volvemos a guardar en el localStorage
 }
