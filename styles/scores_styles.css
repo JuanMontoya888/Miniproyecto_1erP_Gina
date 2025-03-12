@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    background-color: black;
+    color: #00ff00;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+}
+
+h1 {
+    text-shadow: 3px 3px 5px #ff0000;
+}
+
+table {
+    width: 60%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #111;
+    border: 3px solid #00ff00;
+    box-shadow: 0px 0px 15px #00ff00;
+}
+
+th, td {
+    padding: 10px;
+    border: 2px solid #00ff00;
+    text-align: center;
+}
+
+th {
+    background-color: #222;
+    color: #ffcc00;
+}
+
+tr:nth-child(even) {
+    background-color: #333;
+}
+
+tr:hover {
+    background-color: #555;
+}
+
+/* Estilos para el formulario */
+input, button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    padding: 5px;
+    margin: 5px;
+    background: black;
+    color: #00ff00;
+    border: 2px solid #00ff00;
+}
+
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    background: #00ff00;
+    color: black;
+}

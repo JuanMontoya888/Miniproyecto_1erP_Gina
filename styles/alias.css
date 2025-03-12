@@ -1,0 +1,17 @@
+body{
+    background-image: url("/media/fondo.jpg");
+    background-size: cover;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1em;
+}
+
+.abecedario > img{
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    cursor: pointer;
+}
