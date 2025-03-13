@@ -6,12 +6,176 @@ body{
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    gap: 1em;
+    gap: 3em;
+}
+.alias{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 8em;
+}	
+
+.img_alias{
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
 }
 
-.abecedario > img{
+.flecha_regreso{
+    width: 100%;
+    height: auto;
+    cursor: pointer;
+    
+  }
+  .regreso{
     width: 100px;
-    height: 100px;
-    margin: 10px;
+    margin-left: 5em;
+  }
+
+.abecedario{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    width: 70%;
+}
+.letras{
+    width: 80px;
+    height: 92.4px;
     cursor: pointer;
 }
+
+
+
+
+.board{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+
+}
+.dropzone{
+    width: 100px;
+    height: 100px;
+    border: 1px solid white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/*bOTON JUGAR*/
+/* From Uiverse.io by 212004ALJI */ 
+button,button::after {
+    padding: 10px 50px;
+    font-size: 25px;
+    border: solid 2px #fccc53;
+    border-radius: 5px;
+    color: white;
+    background-color: transparent;
+    position: relative;
+    cursor: pointer;
+    font-family: fantasy;
+    
+  }
+  
+  button::after {
+    --move1: inset(50% 50% 50% 50%);
+    --move2: inset(31% 0 40% 0);
+    --move3: inset(39% 0 15% 0);
+    --move4: inset(45% 0 40% 0);
+    --move5: inset(45% 0 6% 0);
+    --move6: inset(14% 0 61% 0);
+    clip-path: var(--move1);
+    content: 'JUGAR';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+  }
+  
+  button:hover::after {
+    animation: glitch_4011 1s;
+    text-shadow: 10 10px 10px black;
+    animation-timing-function: steps(2, end);
+    text-shadow: -3px -3px 0px #22b9fb, 3px 3px 0px #fccc53;
+    background-color: transparent;
+    border: 3px solid #ff184c;
+  }
+  
+  button:hover {
+    text-shadow: -1px -1px 0px #22b9fb, 1px 1px 0px #fccc53;
+  }
+  
+  button:hover {
+    background-color: transparent;
+    border: 1px solid #fccc53;
+    box-shadow: 0px 10px 10px -10px #fccc53;
+  }
+  
+  @keyframes glitch_4011 {
+    0% {
+      clip-path: var(--move1);
+      transform: translate(0px,-10px);
+    }
+  
+    10% {
+      clip-path: var(--move2);
+      transform: translate(-10px,10px);
+    }
+  
+    20% {
+      clip-path: var(--move3);
+      transform: translate(10px,0px);
+    }
+  
+    30% {
+      clip-path: var(--move4);
+      transform: translate(-10px,10px);
+    }
+  
+    40% {
+      clip-path: var(--move5);
+      transform: translate(10px,-10px);
+    }
+  
+    50% {
+      clip-path: var(--move6);
+      transform: translate(-10px,10px);
+    }
+  
+    60% {
+      clip-path: var(--move1);
+      transform: translate(10px,-10px);
+    }
+  
+    70% {
+      clip-path: var(--move3);
+      transform: translate(-10px,10px);
+    }
+  
+    80% {
+      clip-path: var(--move2);
+      transform: translate(10px,-10px);
+    }
+  
+    90% {
+      clip-path: var(--move4);
+      transform: translate(-10px,10px);
+    }
+  
+    100% {
+      clip-path: var(--move1);
+      transform: translate(0);
+    }
+  }
+  
+  

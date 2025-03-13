@@ -1,83 +1,61 @@
-function iniciar(){
-    var imagenes = document.querySelectorAll('#abecedario > img');
-    for(var i = 0; i < imagenes.length; i++){
-        imagenes[i].addEventListener('dragstart', arrastrado, false);
-        imagenes[i].addEventListener('dragend', finalizado, false);
-        
-    }
-
-    soltar = document.getElementById('lienzo');
-    lienzo = soltar.getContext('2d');
-    soltar.addEventListener('dragenter', eventoEnter, false);
-    soltar.addEventListener('dragover', eventoOver, false);
-    soltar.addEventListener('drop', soltado, false);
-
-}
-
-function eventoEnter(e){
-    e.preventDefault();
-}
-
-function eventoOver(e){
-    e.preventDefault();
-}
-
-function finalizado(e){
-    elemento = e.target;
-
-}
-
-function arrastrado(e){
-    e.dataTransfer.setData('src', e.target.src);
-
-}
-
-function soltado(e) {
-    e.preventDefault();
-    var src = e.dataTransfer.getData('src');
-    var img =  new Image();
-    img.src = src;
-    img.onload = function () {
-        var posx = e.pageX - soltar.offsetLeft; // Coordenada X
-        var posy = e.pageY - soltar.offsetTop;  // Coordenada Y
-        lienzo.drawImage(img, posx, posy, 50, 50); // Dibuja la imagen en el canvas
-    };
-}
-
-window.addEventListener('load', iniciar, false);
-
-
-
 const letras = document.querySelectorAll('.letras');
 const zonas = document.querySelectorAll('.dropzone');
 let colocadas = 0;
+let nombre = JSON.parse(localStorage.getItem('nombre')) || [];// el ||[] es para inicializar el array en caso de que no tenga nada
+let nombre_completo = [];
+
 
 letras.forEach(letra => {
     letra.addEventListener('dragstart', (e) => {
-        //guarda el id de cada pieza
         e.dataTransfer.setData('id', letra.id);
     });
 });
 
-zonas.forEach(zona => {//agrega eventos a las zonas donde van a ir las piezas
-    zona.addEventListener('dragover', (e) => {//añade en todas las zonas el evento de drag over para que las piezas se puedan soltar
+zonas.forEach(zona => {
+    zona.addEventListener('dragover', (e) => {
         e.preventDefault();
     });
 
-    zona.addEventListener('drop', (e) => {//añade un evento en todas las zonas para cuando las piezas son soltadas
+    zona.addEventListener('drop', (e) => {
         e.preventDefault();
-        //obtiene el id de la pieza que fue soltada
         const id = e.dataTransfer.getData('id');
-        const pieza = document.getElementById(id);//guarda la pieza por medio del id
+        nombre_completo.push(id);
+        console.log(nombre_completo);
+        
 
-        if (zona.children.length === 0 && id === zona.dataset.id) {//verifica que la zona no tenga una pieza ya y que la pieza que se solto sea la que
-            //debe ir en esa zona
-            zona.appendChild(pieza);//Agrega la pieza en la zona
-            pieza.style.cursor = 'default';//agrega estilos del cursor para la pieza
-            pieza.draggable = false;//hace que la pieza soltada ya no se pueda arrastrar
-            colocadas++;//incrementa el contador de las piezas que ya han sido colocadas correctamente
+        const letra_valor = document.getElementById(id);
+
+        if (zona.children.length === 0) { // Verifica que la zona esté vacía
+            const clon = letra_valor.cloneNode(true); // Clona la pieza
+            clon.id = id ; // ID único
+            clon.draggable = true;
+
+            // Añadir evento de dragstart al clon
+            clon.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('id', clon.id);
+            });
+
+            zona.appendChild(clon); // Agrega el clon a la zona
         }
-
-      
     });
-});    
+});
+
+validar = () => {
+    if (nombre_completo.length < 4 || nombre_completo.length > 8) {
+        alert('Debes ingresar un nombre de 4 a 8 letras');
+
+        // Limpiar todas las zonas
+        zonas.forEach(zona => {
+            zona.innerHTML = ""; // Borra todo el contenido de la zona
+        });
+
+        // Reiniciar el array correctamente
+        nombre_completo = []; 
+
+        return;
+    } else {
+        const new_name = nombre_completo.join('');
+        nombre.push(new_name);
+        localStorage.setItem('nombre', JSON.stringify(nombre));
+    }
+};

@@ -106,6 +106,7 @@ a{
 .container {
     display: flex;
     flex-direction: row;
+    gap: 2em;
   }
   
   .radio-wrapper {
@@ -320,9 +321,29 @@ a{
     height: auto;
     cursor: pointer;
   }
+  .regreso_opciones{
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    padding-left: 200px;
+    padding-bottom:240px ;
+  }
   .regreso{
     width: 100%;
     display: flex;
     justify-content: start;
     padding-left: 200px;
+  }
+
+
+  /*Opciones menu*/
+
+  .body_opciones{
+    display: flex;
+    flex-direction: column;
+    justify-content:space-evenly;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    text-align: center;
   }
