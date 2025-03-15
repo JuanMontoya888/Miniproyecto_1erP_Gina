@@ -1,7 +1,7 @@
 const letras = document.querySelectorAll('.letras');
 const zonas = document.querySelectorAll('.dropzone');
 let colocadas = 0;
-let nombre = JSON.parse(localStorage.getItem('nombre')) || [];// el ||[] es para inicializar el array en caso de que no tenga nada
+let nombre = [];// el ||[] es para inicializar el array en caso de que no tenga nada
 let nombre_completo = [];
 
 
@@ -58,6 +58,10 @@ validar = () => {
         nombre.push(new_name);
         localStorage.setItem('nombre', JSON.stringify(nombre));
 
-        location.href = 'startGame.html';
+        location.href = 'textRetro.html';
     }
 };
+
+
+obj = {value: 'Loading ...', page: 'startGame.html' };
+localStorage.setItem('text', JSON.stringify(obj) );

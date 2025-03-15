@@ -17,8 +17,11 @@ tableBody.addEventListener('dblclick', (event)=>{
     tr_label = event.target.parentNode;
 
     var nombre;
-    nombre = tr_label.children[1];
+    nombre = tr_label.children[1].textContent;
     localStorage.setItem('nombre', JSON.stringify(nombre));
 
-    location.href = 'startGame.html';
+    location.href = 'textRetro.html';
 });
+
+obj = {value: 'Loading ...', page: 'startGame.html' };
+localStorage.setItem('text', JSON.stringify(obj) );

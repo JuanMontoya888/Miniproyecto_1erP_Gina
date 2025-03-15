@@ -13,6 +13,7 @@ body {
   gap: 1em;
   color: white;
   height: 70vh;
+  overflow: hidden;
 }
 
 a {

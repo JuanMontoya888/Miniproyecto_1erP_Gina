@@ -3,18 +3,28 @@
 body {
     color: #00ff00;
     font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
     text-align: center;
     background-image: url("/media/fondo.jpg");
     background-size: cover;
     background-attachment: fixed;
+    overflow: hidden;
 
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
     .regreso{
         width: 100%;
         display: flex;
         justify-content: start;
         padding-left: 200px;
+    }
+
+    table{
+        width: 100%;
+        cursor: pointer;
     }
 }
 

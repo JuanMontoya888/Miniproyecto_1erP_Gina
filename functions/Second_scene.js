@@ -1,6 +1,6 @@
 //creamos la configuracion de el videojuego que sera ingresada al inicio
 // esta configuracion es almacenada en un JSON
-var config =
+let config =
 {
     type: Phaser.AUTO,
     width: window.innerWidth,
@@ -13,15 +13,14 @@ var config =
     }
 };
 
-var vida_enemy;
-var vidas = [];
-var numVidas = 3;
-var score = 0, gameOver = false, win = false, scoreText, choque;
-var player; //jugador que sera la nave
-var balas = []; //arreglo de balas que estaran en constante disparo
-var fire_enemy = []; //arreglo de fuego que lanza el enemigos
+let vidas = [];
+let numVidas = 3;
+let score = 0, gameOver = false, win = false, scoreText, choque, name_user, vida_enText;
+let player; //jugador que sera la nave
+let balas = []; //arreglo de balas que estaran en constante disparo
+let fire_enemy = []; //arreglo de fuego que lanza el enemigos
 //enemigo final el cual necesita conocer sus valores maximos y minimos de spawneo
-var enemy = {
+let enemy = {
     enemy_el: null, //aqui se guarda el objeto que obtiene la creacion del enemigo
     x: {
         x_max: (window.innerWidth - 80), //tam pantalla -150px
@@ -39,7 +38,7 @@ var enemy = {
 let events_time = []; //se guardan todos los eventos de tiempo, para detenerlos
 
 
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 
 function preload() {
     const div = document.createElement('div');
@@ -53,16 +52,16 @@ function preload() {
     this.load.image('nave', '../media/nave.png');
     this.load.image('fondo', '../media/fondo.jpg');
     this.load.image('bala', './media/bullet.png');
-    this.load.image('enemy', '../media/enemigo.png');
+    this.load.image('enemy', '../media/enemigo2.png');
     this.load.image('fire', '../media/fire.png');
     this.load.image('vida', '../media/vidas.png');
     this.load.image('choque', '../media/choque.png');
-    this.load.spritesheet('vida_enemy', '../media/vida_enemy.png', { frameWidth: 32, frameHeight: 32 });
 
 }
 
 function create() {
     score = JSON.parse(localStorage.getItem('recent_data')).score;
+    name_user = JSON.parse(localStorage.getItem('recent_data')).name;
     // We're gonna create all items 
     //imagen de fondo
     this.add.image(680, 300, 'fondo');
@@ -76,8 +75,8 @@ function create() {
     let X = Phaser.Math.Between(enemy.x.x_min, enemy.x.x_max);
     let Y = Phaser.Math.Between(enemy.y.y_min, enemy.y.y_max);
     //console.log(X + ' ' + Y);
-    enemy.enemy_el = this.add.image(X, Y, 'enemy'); //creamos el enemigo en coordenadas aleatorias
-
+    enemy.enemy_el = this.add.image(X, Y, 'enemy').setScale(.8); //creamos el enemigo en coordenadas aleatorias
+    enemy.enemy_el.setFlipX(true); // Aplica el efecto de espejo horizontal
 
     //creamos un evento que se repetira cada 500ms que creara una bala
     events_time[0] = this.time.addEvent({
@@ -119,11 +118,6 @@ function create() {
     //creamos la entrada de eventos desde el teclado
     cursors = this.input.keyboard.createCursorKeys();
 
-
-    //agregamos el score y el numero de vidas
-    scoreText = this.add.text(16, 46, '', { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
-    scoreText.setText(`Score: ${score}`);
-
     //vidas de usuario
     vidas = [
         this.add.image(window.innerWidth - 40, 40, 'vida'),
@@ -131,17 +125,17 @@ function create() {
         this.add.image(window.innerWidth - 160, 40, 'vida')
     ];
 
-    //vida del enemigo con sprites
-    for (let i = 0; i < 3; i++) {
-        this.anims.create({
-            key: `frame${0}`, //un nombre unico para cada frame
-            frames: [{ key: 'vida_enemy', frame: i }], // Solo un frame por estado
-            frameRate: 10
-        });
-    }
 
-    //vida del enemigo, primer sprite que contiene la vida entera
-    vida_enemy = this.add.sprite(100, 100, 'vida_enemy', 0); // Inicia en el primer frame
+    const fechaActual = new Date();
+    const Fecha = fechaActual.toLocaleDateString();
+
+
+    //agregamos el score y el numero de vidas
+    this.add.text(16, 36, `Name: ${name_user}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    this.add.text(336, 36, `Date: ${Fecha}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    scoreText = this.add.text(16, 86, `Score: ${score}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    vida_enText = this.add.text(336, 86, `Enemy's life: ${enemy.vida}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+
 }
 
 
@@ -151,12 +145,20 @@ function update() {
         events_time.forEach((elem) => {
             elem.remove();
         });
+
+        location.href = 'textRetro.html';
+        obj = { value: 'Game Over', page: 'menu.html' };
+        localStorage.setItem('text', JSON.stringify(obj));
     }; //si perdio termina ejecucion
     if (win) {
         saveData_LS()
         events_time.forEach((elem) => {
             elem.remove();
         });
+
+        location.href = 'textRetro.html';
+        obj = { value: 'Win', page: 'menu.html' };
+        localStorage.setItem('text', JSON.stringify(obj));
     };
     if (choque) choque.destroy();
 
@@ -176,16 +178,9 @@ function update() {
             bala.destroy(); //se elimina la bala que impacto
             balas.splice(index, 1); //se elimina del arreglo la bala para que no pase por el foreach
 
+            vida_enText.setText(`Enemy's life: ${enemy.vida}`);
             //simula el choque de la bala con el enemigo
             choque = this.add.image(enemy.enemy_el.x, enemy.enemy_el.y, 'choque');
-
-            //vamos modificando el sprite de vidas del enemigo
-            if (enemy.vida <= (enemy.vida_enemy / 2)) {
-                vida_enemy.setFrame(1);
-            } else if (enemy.vida === 0) {
-                vida_enemy.setFrame(2);
-            }
-
 
         } else if (bala.x > window.innerWidth) { //Revisa si la bala sobrepaso el limite 
             bala.destroy(); // Elimina la bala del juego
@@ -268,15 +263,19 @@ function checkCollision(obj1, obj2) {
 //Función que recupera los datos enviados de la escena pasada y las suma a las estadisticas de esta escena
 // y los guarda en la tabla de registros de los que jugaron
 function saveData_LS() {
-    var recent_data = JSON.parse(localStorage.getItem('recent_data')); //obtenemos el JSON y lo convertimos a objeto
+    let recent_data = JSON.parse(localStorage.getItem('recent_data')); //obtenemos el JSON y lo convertimos a objeto
     //localStorage.setItem('recent_data', ''); //vaciamos el campo en el localStorage que fue usado en la primera escena
-    var registerArray = JSON.parse(localStorage.getItem('scores')) || []; //obtenemos la lista de todos los registros
+    let registerArray = JSON.parse(localStorage.getItem('scores')) || []; //obtenemos la lista de todos los registros
+
+    const fechaActual = new Date();
+    const Fecha = fechaActual.toLocaleDateString(); // Devuelve la fecha en formato local
 
 
     //aqui creamos el registro con los datos de la escena anterior y esta escena, el score y el nombre
-    var data_user = {
+    let data_user = {
         name: recent_data.name,
-        score: score
+        score: score,
+        fecha: Fecha 
     };
 
     //si encuentra el registro con el mismo nombre y si es mayor el score lo eliminara, sino solo lo actualizara

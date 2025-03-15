@@ -17,14 +17,15 @@ let config = {
 };
 
 let vidas, numVidas = 3, player, stars = [];
-let asteroids, bala, balas = [];
+let enemies, item_esp, bala, balas = [];
 let platforms, plataformas = [];
 let cursors, score = 0;
 let gameOver = false;
 let scoreText;
 const timeTake = 8000;
+let time_object;
 let temporizador, time = 90;
-let timeText; //etiqueta del tiempo
+let timeText, timeItem; //etiqueta del tiempo
 let events_time = []; //se guardan todos los eventos de tiempo, para detenerlos
 let win = false;
 let name_user; //nombre del usuario
@@ -40,13 +41,18 @@ function preload() {
     div.style.opacity = '0';
     div.innerHTML = '.';
     document.body.appendChild(div);
-    
+
+    //itemEsp
+    this.load.image('itemEsp', '../media/itemEsp.png');
+
+
     this.load.image('fondo', '../media/fondo.jpg');
     this.load.image('platform', '../media/platform.png');
     this.load.image('suelo', '../media/suelo.png');
     this.load.image('star', '../media/star.png');
+    this.load.image('star', '../media/item.png');
     this.load.image('enemy', '../media/enemigo.png');
-    this.load.spritesheet('dude', '../media/dude.png', { frameWidth: 32, frameHeight: 48 });
+    this.load.spritesheet('dude', '../media/dark_soldier-lord.png', { frameWidth: 48, frameHeight: 64 });
     this.load.image('vida', '../media/vidas.png');
     this.load.image('disparo', '../media/bullet.png');
     this.load.image('disparo_R', '../media/bullet_R.png');
@@ -67,17 +73,19 @@ function create() {
     });
     //Creamos el suelo sobre el que rebotaran las cosas
     suelo = this.physics.add.staticGroup();
+    item_esp = this.physics.add.group(); //item especial
 
     //suelo
     suelo.create(200, window.innerHeight - 40, 'suelo').setScale(.8).refreshBody();
     suelo.create(600, window.innerHeight - 10, 'suelo').setScale(.6).refreshBody();
+    suelo.create(850, window.innerHeight - 10, 'suelo').setScale(.6).refreshBody();
     suelo.create(1200, window.innerHeight - 40, 'suelo').setScale(.8).refreshBody();
 
-    //creamos 2 plataformas inicialmente
-    for(let i = 0 ; i < 4 ; i++){
-        plataformas.push(platforms.create( 
-            Phaser.Math.Between(300 + (i*100), window.innerWidth-200 + (i*100)) , //el i para hacer que no spawneen iguales
-            Phaser.Math.Between(300, window.innerHeight-200) , 
+    //creamos 4 plataformas inicialmente
+    for (let i = 0; i < 4; i++) {
+        plataformas.push(platforms.create(
+            Phaser.Math.Between(300 + (i * 100), window.innerWidth - 200 + (i * 100)), //el i para hacer que no spawneen iguales
+            Phaser.Math.Between(200, window.innerHeight - 150),
             'platform').setScale(.8)
         );
     }
@@ -92,20 +100,21 @@ function create() {
     //  Our player animations, turning, walking left and walking right.
     this.anims.create({
         key: 'left',
-        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
+        frames: this.anims.generateFrameNumbers('dude', { start: 9, end: 11 }),
         frameRate: 10,
         repeat: -1
     });
 
     this.anims.create({
         key: 'turn',
-        frames: [{ key: 'dude', frame: 4 }],
-        frameRate: 20
+        frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 2 }),
+        frameRate: 10,
+        repeat: -1
     });
 
     this.anims.create({
         key: 'right',
-        frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
+        frames: this.anims.generateFrameNumbers('dude', { start: 3, end: 5 }),
         frameRate: 10,
         repeat: -1
     });
@@ -120,51 +129,48 @@ function create() {
         callback:
             () => {
                 stars.push(this.physics.add.sprite(Phaser.Math.Between(50, window.innerHeight), 10, 'star'));
-                this.physics.add.collider(stars ,platforms)
-                this.physics.add.collider(stars ,suelo)
+                this.physics.add.collider(stars, platforms);
+                this.physics.add.collider(stars, suelo);
             },
         callbackScope: this,
         loop: true // Se repite indefinidamente
     });
 
-    asteroids = this.physics.add.group();
+    enemies = this.physics.add.group();
     bala = this.physics.add.group({ //balas que va a disparar el mono
         allowGravity: false, // No afecta la gravedad
     });
 
     // colisiones de los elementos
     this.physics.add.collider(player, platforms);
-    this.physics.add.collider(asteroids, platforms);
+    this.physics.add.collider(enemies, platforms);
     this.physics.add.collider(player, suelo);
-    this.physics.add.collider(asteroids, suelo);
+    this.physics.add.collider(enemies, suelo);
 
     // Revisar si no se sobreponen elementos, le mandas una funcion y ejecutara cuando se sobrepongan
     this.physics.add.overlap(player, stars, collectStar, null, this);
-    this.physics.add.overlap(bala, asteroids, destroy_asteroid, null, this);
-    this.physics.add.overlap(bala, platforms, (bala, platform)=>{bala.disableBody(true, true)}, null, this);    
+    this.physics.add.overlap(bala, enemies, destroy_asteroid, null, this);
+    this.physics.add.overlap(bala, platforms, (bala, platform) => { bala.disableBody(true, true) }, null, this);
 
 
     //las vidas del jugador
     vidas = [
-        this.add.image(window.innerWidth - 40, 40, 'vida'),
-        this.add.image(window.innerWidth - 100, 40, 'vida'),
-        this.add.image(window.innerWidth - 160, 40, 'vida')
+        this.add.image(window.innerWidth - 100, 50, 'vida'),
+        this.add.image(window.innerWidth - 160, 50, 'vida'),
+        this.add.image(window.innerWidth - 220, 50, 'vida')
     ];
 
     //creamos un evento que se repetira cada 15s a 20s que creara un item especial, y pasado el tiempo lo eliminara, ese dara mas puntos
     events_time[1] = this.time.addEvent({
-        delay:  Phaser.Math.Between(15000, 20000),
-        //crearemos una funcion anonima
-        callback:
-            () => {
-
-            },
+        delay: Phaser.Math.Between(15000, 20000), // Tiempo aleatorio entre 15s y 20s
+        callback: crearItemEsp,
         callbackScope: this,
-        loop: true // Se repite indefinidamente
+        loop: true // Repetir indefinidamente
     });
 
+
     //creamos un evento que se repetira cada 10s que creara un enemigo
-    events_time[2] =this.time.addEvent({
+    events_time[2] = this.time.addEvent({
         delay: 8000, callback: crearAsteroide, callbackScope: this, loop: true // Se repite indefinidamente
     });
 
@@ -175,23 +181,34 @@ function create() {
 
 
     //colision de el asteroide con el jugador
-    this.physics.add.collider(player, asteroids, hitAsteroid, null, this);
-    
+    this.physics.add.collider(player, enemies, hitAsteroid, null, this);
 
-    scoreText = this.add.text(16, 46, '', {fontSize: '18px',  fill: 'white',  fontFamily: 'RetroFont'  });
-    scoreText.setText(`Score: ${score}`);
-    timeText = this.add.text(256, 46, ``, { fontSize: '18px', fill: 'white',  fontFamily: 'RetroFont' });
-    timeText.setText(`Time: ${time} seg`);
+
+    const fechaActual = new Date();
+    const Fecha = fechaActual.toLocaleDateString();
+
+    this.add.text(16, 36, `Name: ${name_user}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    this.add.text(336, 36, `Date: ${Fecha}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    scoreText = this.add.text(16, 86, `Score: ${score}`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    timeText = this.add.text(336, 86, `Time: ${time}s`, { fontSize: '18px', fill: 'white', fontFamily: 'RetroFont' });
+    timeItem = this.add.text(window.innerWidth - 500, 46, ``, { fontSize: '18px', fill: 'red', fontFamily: 'RetroFont' });
 
 }
 
 function update() {
     if (win) {
         saveData_LS();
-        location.href = 'secondScene.html';
+
+        location.href = 'textRetro.html';
+        obj = { value: 'Loading ...', page: 'secondScene.html' };
+        localStorage.setItem('text', JSON.stringify(obj));
     };
-    if (gameOver){
+    if (gameOver) {
         saveScore_LS();
+
+        location.href = 'textRetro.html';
+        obj = { value: 'Game Over', page: 'menu.html' };
+        localStorage.setItem('text', JSON.stringify(obj));
     };
 
     //funcion que movera las plataformas a la izquierda
@@ -199,32 +216,32 @@ function update() {
         platform.setVelocityX(-80);
 
         //cuando esta desaparezca creara una nueva plataforma
-        if(platform.x < -200){
+        if (platform.x < -200) {
             platform.destroy(); //eliminamos la plataforma
             plataformas.splice(index, 1); //la eliminamos del arreglo
             plataformas.push(platforms.create( //Crearemos una nueva plataforma 
-                Phaser.Math.Between((window.innerWidth/2) + 200, window.innerWidth-50) , 
-                Phaser.Math.Between(100, window.innerHeight-300) , 
+                Phaser.Math.Between((window.innerWidth / 2) + 200, window.innerWidth - 50),
+                Phaser.Math.Between(100, window.innerHeight - 300),
                 'platform').setScale(Phaser.Math.Between(.7, 1))
             );
         }
     });
 
     //desplazaremos los disparos que de el mono
-    balas.forEach((element, index)=>{
+    balas.forEach((element, index) => {
         //aqui revisamos hacia que lado esta volteando y hacia alla dispararemos
-        if(element.left){ //si esta hacia el lado izquierdo se ira a los negativo
+        if (element.left) { //si esta hacia el lado izquierdo se ira a los negativo
             element.bala.setVelocityX(-700);
-        }else{ //si no, por default ira a los positivos
+        } else { //si no, por default ira a los positivos
             element.bala.setVelocityX(700);
         }
 
-        if(element.bala.x > window.innerWidth || element.bala.x < 0){ //si sobrepasa la pantalla en ambas direcciones eliminamos la bala
+        if (element.bala.x > window.innerWidth || element.bala.x < 0) { //si sobrepasa la pantalla en ambas direcciones eliminamos la bala
             element.bala.destroy();
             balas.splice(index, 1);
         }
     });
-    
+
 
     if (cursors.left.isDown) {
         player.setVelocityX(-160);
@@ -247,12 +264,12 @@ function update() {
     if (cursors.space.isDown && this.time.now > lastFired) {
         disp = {
             left: (cursors.left.isDown) ? true : false,
-            bala: bala.create(player.x, player.y, (cursors.left.isDown) ? 'disparo_R' : 'disparo' )
+            bala: bala.create(player.x, player.y, (cursors.left.isDown) ? 'disparo_R' : 'disparo')
         };
         balas.push(disp);
         lastFired = this.time.now + 300; // Disparar cada 300ms
     }
-    
+
 }
 
 function collectStar(player, star) {
@@ -262,8 +279,15 @@ function collectStar(player, star) {
     scoreText.setText(`Score: ${score}`);
 }
 
+function collectItem(player, item) {
+    item.disableBody(true, true);
+
+    score += 40;
+    scoreText.setText(`Score: ${score}`);
+}
+
 //cuando se sobrepongan la bala y el asteroide este se destruira
-function destroy_asteroid(bala, asteroide){
+function destroy_asteroid(bala, asteroide) {
     bala.disableBody(true, true);
     asteroide.disableBody(true, true);
 
@@ -290,10 +314,51 @@ function hitAsteroid(player, enemy) {
     }
 }
 
+function crearItemEsp() {
+    // Creamos el ítem especial con las mismas propiedades que el asteroide, pero este se podra tomar
+    let x = (player.x < 400) ? Phaser.Math.Between(400, window.innerWidth) : Phaser.Math.Between(0, 400);
+    let item = item_esp.create(x, 16, 'itemEsp').setScale(.05);
+    item.setBounce(1);
+    item.setCollideWorldBounds(true);
+    item.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    item.allowGravity = true;
+
+    this.physics.add.collider(item_esp, platforms);
+    this.physics.add.collider(item_esp, suelo);
+    this.physics.add.overlap(player, item_esp, collectItem, null, this);
+
+    // Contador para los segundos restantes
+    let timeLeft = 12;  // TIempo que se comparara
+    timeItem.setText(`${timeLeft}s`);  // Mostrar el tiempo inicial
+
+    // Timer dentro de otro timer, esto para eliminar el elemento cada cierto tiempo
+    let countdown = this.time.addEvent({
+        delay: 1000,   // Cada segundo
+        callback: () => {
+            timeLeft--;  // Restamos un segundo
+            timeItem.setText(`${timeLeft}s`);  // Actualizar texto
+            //Si ya tomaron el item esp desactivara el contador
+            if (!item.active) {
+                countdown.remove(); // Detener el contador
+                timeItem.setText('');  // Limpiar el texto
+            }
+
+            // Cuando el tiempo se acabe, eliminar el ítem
+            if (timeLeft <= 0) {
+                item.disableBody(true, true);  // Desactivar el ítem
+                countdown.remove();  // Detener el contador
+                timeItem.setText('');  // Limpiar el texto
+            }
+        },
+        callbackScope: this,
+        loop: true
+    });
+}
+
 function crearAsteroide() {
     let x = (player.x < 400) ? Phaser.Math.Between(400, window.innerWidth) : Phaser.Math.Between(0, 400);
 
-    let enemy = asteroids.create(x, 16, 'enemy').setScale(.2);
+    let enemy = enemies.create(x, 16, 'enemy').setScale(.2);
     enemy.setBounce(1);
     enemy.setCollideWorldBounds(true);
     enemy.setVelocity(Phaser.Math.Between(-200, 200), 20);
@@ -303,19 +368,19 @@ function crearAsteroide() {
 }
 
 //funcion que actualizara el reloj, cuando llegue a 0 este detendra el reloj y la ejecucion
-function clock(){
+function clock() {
     time--;
-    timeText.setText(`Time: ${time} seg`);
-    if(!time){
+    timeText.setText(`Time: ${time}s`);
+    if (!time) {
         temporizador.remove();
-        events_time.forEach((element)=>{element.remove()});
+        events_time.forEach((element) => { element.remove() });
         win = true;
     }
 }
 
 
 //Función que guarda los datos de esta escena
-function saveData_LS(){
+function saveData_LS() {
     //aqui creamos el registro con los datos de la escena
     let data_user = {
         name: name_user,
@@ -325,24 +390,29 @@ function saveData_LS(){
     localStorage.setItem('recent_data', JSON.stringify(data_user)); // enviamos al localStorage
 }
 
-function saveScore_LS(){
+
+function saveScore_LS() {
     let registerArray = JSON.parse(localStorage.getItem('scores')) || []; //obtenemos la lista de todos los registros
+    const fechaActual = new Date();
+    const Fecha = fechaActual.toLocaleDateString(); // Devuelve la fecha en formato local
+
     let data_user = {
         name: name_user,
-        score: score
+        score: score,
+        fecha: Fecha
     };
 
-    
+
     //si encuentra el registro con el mismo nombre y si es mayor el score lo eliminara, sino solo lo actualizara
-    if(registerArray.find((element) => element.name === data_user.name)){
+    if (registerArray.find((element) => element.name === data_user.name)) {
         registerArray.forEach((element, index) => {
-            if(element.name === data_user.name) {
-                if(element.score > data_user.score) data_user = registerArray.splice(index, 1) //eliminamos el registro
+            if (element.name === data_user.name) {
+                if (element.score > data_user.score) data_user = registerArray.splice(index, 1) //eliminamos el registro
                 else registerArray.splice(index, 1)
             }
         });
     }
-    
+
     registerArray.push(data_user); //guardamos el registro en el array
     localStorage.setItem('scores', JSON.stringify(registerArray));
 }
