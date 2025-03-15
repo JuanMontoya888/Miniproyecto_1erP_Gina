@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="/styles/estilos.css">
+    <link rel="stylesheet" href="styles/scores_styles.css">
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            gap: 5rem;
+
+            .img_P {
+                width: 200px;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="regreso">
+        <img src="media/-3-11-2025.png" class="flecha_regreso" onclick="location.href='indeopcionesJugar.html'">
+    </div>
+
+    <div>
+        <img src="media/Selecciona-Personaje-15-3-2025.png" class="img_P"">
+    </div>
+
+    <div class="menu" id="menu">
+        <img src="media/personaje1.png" class="img_P"" value="soldier1Frames.png">
+        <img src=" media/personaje2.png" class="img_P" value="soldier2Frames.png">
+
+    </div>
+    <h2>
+        Da doble click sobre el personaje
+    </h2>
+
+    <script src=" functions/menu.js"></script>
+
+</body>
+
+<script>
+    // Evento doble clic para obtener el valor del atributo "value"
+    document.addEventListener('dblclick', (event) => {
+        if (event.target.classList.contains('img_P')) {
+            const personajeValue = event.target.getAttribute('value');
+            localStorage.setItem('personaje_selected', JSON.stringify(personajeValue));
+            //console.log('Personaje seleccionado:', personajeValue);
+
+            window.location.href = 'textRetro.html';
+        }
+    });
+
+    obj = {value: 'Loading ...', page: 'startGame.html' };
+    localStorage.setItem('text', JSON.stringify(obj) );
+</script>
+
+
+</html>

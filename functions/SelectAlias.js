@@ -20,8 +20,6 @@ tableBody.addEventListener('dblclick', (event)=>{
     nombre = tr_label.children[1].textContent;
     localStorage.setItem('nombre', JSON.stringify(nombre));
 
-    location.href = 'textRetro.html';
+    location.href = 'selectPer.html';
 });
 
-obj = {value: 'Loading ...', page: 'startGame.html' };
-localStorage.setItem('text', JSON.stringify(obj) );

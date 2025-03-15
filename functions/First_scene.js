@@ -56,7 +56,7 @@ function preload() {
     this.load.image('star', '../media/star.png');
     this.load.image('star', '../media/item.png');
     this.load.image('enemy', '../media/enemigo.png');
-    this.load.spritesheet('dude', '../media/dark_soldier-lord.png', { frameWidth: 48, frameHeight: 64 });
+    this.load.spritesheet('dude', `../media/${JSON.parse(localStorage.getItem('personaje_selected'))}`, { frameWidth: 48, frameHeight: 64 });
     this.load.image('vida', '../media/vidas.png');
     this.load.image('disparo', '../media/bullet.png');
     this.load.image('disparo_R', '../media/bullet_R.png');

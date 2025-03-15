@@ -42,26 +42,36 @@ zonas.forEach(zona => {
 
 validar = () => {
     if (nombre_completo.length < 4 || nombre_completo.length > 8) {
-        alert('Debes ingresar un nombre de 4 a 8 letras');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Debes ingresar un nombre de 4 a 8 letras',
+            confirmButtonText: 'Entendido'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Limpiar todas las zonas
+                zonas.forEach(zona => {
+                    zona.innerHTML = ""; // Borra todo el contenido de la zona
+                });
 
-        // Limpiar todas las zonas
-        zonas.forEach(zona => {
-            zona.innerHTML = ""; // Borra todo el contenido de la zona
+                // Reiniciar el array correctamente
+                nombre_completo = [];
+            }
         });
-
-        // Reiniciar el array correctamente
-        nombre_completo = []; 
-
-        return;
     } else {
         const new_name = nombre_completo.join('');
         nombre.push(new_name);
         localStorage.setItem('nombre', JSON.stringify(nombre));
 
-        location.href = 'textRetro.html';
+        Swal.fire({
+            icon: 'success',
+            title: 'Éxito',
+            text: 'Nombre guardado correctamente',
+            confirmButtonText: 'Aceptar'
+        }).then((result) => {
+            if (result.isConfirmed || result.isDismissed) {
+                location.href = 'selectPer.html';
+            }
+        });
     }
 };
-
-
-obj = {value: 'Loading ...', page: 'startGame.html' };
-localStorage.setItem('text', JSON.stringify(obj) );
