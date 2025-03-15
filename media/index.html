@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>SPACEJUAN</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+
+        /* Estados iniciales */
+        #pantalla_inicio {
+            display: block;
+        }
+
+        #loader {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="./styles/estilos.css">
+</head>
+
+<body>
+    <!-- Pantalla de inicio -->
+    <div class="pantalla_inicio" id="pantalla_inicio">
+        <div class="titulo_logo">
+            <img src="media/SPACEJUAN-3-11-2025.png" alt="">
+        </div>
+        <a href="" class="presionar_para_jugar">Presiona enter para continuar</a>
+    </div>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div data-glitch="Loading..." class="glitch">Loading...</div>
+    </div>
+    <script src="functions/menu.js"></script>
+</body>
+
+</html>
