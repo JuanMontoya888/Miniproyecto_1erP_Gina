@@ -36,7 +36,7 @@ let enemy = {
     vida_enemy: 100 //life constant
 };  //enemigo lo declaramos, pero mas tarde añadiremos en el create su imagen en el juego
 let events_time = []; //se guardan todos los eventos de tiempo, para detenerlos
-
+let music, disparo;
 
 let game = new Phaser.Game(config);
 
@@ -47,6 +47,9 @@ function preload() {
     div.style.opacity = '0';
     div.innerHTML = '.';
     document.body.appendChild(div);
+
+    this.load.audio('musicaFondo', '../media/sound/Desert_Theme.mp3');
+    this.load.audio('disparo', '../media/sound/disparo.mp3');
 
     // Here we're gonna preload all images
     this.load.image('nave', '../media/nave.png');
@@ -60,6 +63,15 @@ function preload() {
 }
 
 function create() {
+
+    music = this.musica = this.sound.add('musicaFondo');
+    music.play({
+        loop: true, // Repetir la música
+        volume: 1
+    });
+    disparo = this.musica = this.sound.add('disparo');
+
+
     score = JSON.parse(localStorage.getItem('recent_data')).score;
     name_user = JSON.parse(localStorage.getItem('recent_data')).name;
     // We're gonna create all items 
@@ -85,6 +97,7 @@ function create() {
         //crearemos una funcion anonima que se estara llamando cada 500ms para  simular un disparo
         callback:
             () => {
+                disparo.play({loop:false, volume:.6});
                 //agregamos una bala en el arreglo cada 500ms y la agregamos a pantalla como un nuevo elemento
                 balas.push(this.add.image(player.x, player.y, 'bala'));
                 //console.log(balas);
@@ -107,6 +120,7 @@ function create() {
                 enemy.new_cor = { x: X, y: Y };
                 //console.log(enemy.new_cor);
 
+                disparo.play({loop:false, volume:.5});
                 //agregamos un nuevo elemento a el arreglo para despues recorrerlo
                 fire_enemy.push(this.add.image(enemy.enemy_el.x, enemy.enemy_el.y, 'fire'));
             },

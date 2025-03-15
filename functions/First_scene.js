@@ -30,7 +30,7 @@ let events_time = []; //se guardan todos los eventos de tiempo, para detenerlos
 let win = false;
 let name_user; //nombre del usuario
 let lastFired = 0; // Variable para controlar el tiempo de disparo, cada 300ms
-
+let music, damage, disparo;
 
 let game = new Phaser.Game(config);
 
@@ -44,6 +44,10 @@ function preload() {
 
     //itemEsp
     this.load.image('itemEsp', '../media/itemEsp.png');
+
+    this.load.audio('musicaFondo', '../media/sound/diverSoundtrack.mp3');
+    this.load.audio('damage', '../media/sound/damage.mp3');
+    this.load.audio('disparo', '../media/sound/disparo.mp3');
 
 
     this.load.image('fondo', '../media/fondo.jpg');
@@ -59,6 +63,15 @@ function preload() {
 }
 
 function create() {
+
+    music = this.musica = this.sound.add('musicaFondo');
+    music.play({
+        loop: true, // Repetir la música
+        volume: 0.8
+    });
+    disparo = this.musica = this.sound.add('disparo');
+    damage = this.musica = this.sound.add('damage');
+
     //obtenemos el nombre guardado en el localStorage
     users_array = JSON.parse(localStorage.getItem('nombre'));
     name_user = users_array[users_array.length - 1];
@@ -181,7 +194,7 @@ function create() {
 
 
     //colision de el asteroide con el jugador
-    this.physics.add.collider(player, enemies, hitAsteroid, null, this);
+    this.physics.add.collider(player, enemies, hitEnemy, null, this);
 
 
     const fechaActual = new Date();
@@ -259,8 +272,7 @@ function update() {
         player.setVelocityY(-330);
     }
 
-
-    // Dentro del update
+    // disparo de balas
     if (cursors.space.isDown && this.time.now > lastFired) {
         disp = {
             left: (cursors.left.isDown) ? true : false,
@@ -268,6 +280,7 @@ function update() {
         };
         balas.push(disp);
         lastFired = this.time.now + 300; // Disparar cada 300ms
+        disparo.play({loop: false, volume: 0.8});
     }
 
 }
@@ -295,9 +308,11 @@ function destroy_asteroid(bala, asteroide) {
     scoreText.setText(`Score: ${score}`);
 }
 
-function hitAsteroid(player, enemy) {
+function hitEnemy(player, enemy) {
     // vamos eliminando las imagenes de corazones cada que un asteroide golpee
     //y tambien las eliminamos del array
+    damage.play({loop: false, volume: 0.8});
+
     vidas[vidas.length - 1].destroy();
     vidas.pop();
 
