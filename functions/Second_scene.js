@@ -60,6 +60,7 @@ function preload() {
     this.load.image('vida', '../media/vidas.png');
     this.load.image('choque', '../media/choque.png');
 
+    this.load.image('play', '../media/play.png');
 }
 
 function create() {
@@ -71,12 +72,15 @@ function create() {
     });
     disparo = this.musica = this.sound.add('disparo');
 
-
+    //recogemos los datos del localstorage
     score = JSON.parse(localStorage.getItem('recent_data')).score;
     name_user = JSON.parse(localStorage.getItem('recent_data')).name;
-    // We're gonna create all items 
+
     //imagen de fondo
     this.add.image(680, 300, 'fondo');
+    this.add.image(window.innerWidth-350, 70, 'play').setScale(.8).setInteractive().on('pointerdown', ()=>{(music.isPlaying) ? music.pause() : music.resume()});
+    this.add.text(window.innerWidth-410, 30, `Play/Resume`, { fontSize: '10px', fill: 'white', fontFamily: 'RetroFont' });
+
 
     //creamos al jugador y lo asignamos en una variable
     player = this.add.image(100, 450, 'nave');
@@ -156,9 +160,8 @@ function create() {
 function update() {
     if (gameOver) {
         saveData_LS()
-        events_time.forEach((elem) => {
-            elem.remove();
-        });
+        events_time.forEach((element)=>{element.remove()});
+        this.time.addEvent({delay: 3000, callback: ()=>{}, callbackScope: this, loop: true});
 
         location.href = 'textRetro.html';
         obj = { value: 'Game Over', page: 'menu.html' };
@@ -166,12 +169,11 @@ function update() {
     }; //si perdio termina ejecucion
     if (win) {
         saveData_LS()
-        events_time.forEach((elem) => {
-            elem.remove();
-        });
+        events_time.forEach((element)=>{element.remove()});
+        this.time.addEvent({delay: 3000, callback: ()=>{}, callbackScope: this, loop: true});
 
-        location.href = 'textRetro.html';
-        obj = { value: 'Win', page: 'menu.html' };
+        location.href = 'WinGame.html';
+        obj = { value: `Congratulations ${name_user}!! You Win`, page: 'menu.html', time: 2000};
         localStorage.setItem('text', JSON.stringify(obj));
     };
     if (choque) choque.destroy();
@@ -188,7 +190,7 @@ function update() {
             scoreText.setText(`Score: ${score}`);
 
             enemy.vida -= 2; //disminuye la vida del enemigo cada que tenga una colision
-            enemy.velocidad_mov += .1; //aumenta velocidad de movimiento
+            enemy.velocidad_mov += .15; //aumenta velocidad de movimiento
             bala.destroy(); //se elimina la bala que impacto
             balas.splice(index, 1); //se elimina del arreglo la bala para que no pase por el foreach
 

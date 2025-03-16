@@ -60,6 +60,8 @@ function preload() {
     this.load.image('vida', '../media/vidas.png');
     this.load.image('disparo', '../media/bullet.png');
     this.load.image('disparo_R', '../media/bullet_R.png');
+
+    this.load.image('play', '../media/play.png');
 }
 
 function create() {
@@ -78,6 +80,8 @@ function create() {
 
     // fondo de nuestro juego
     this.add.image(680, 300, 'fondo');
+    this.add.image(window.innerWidth-350, 70, 'play').setScale(.8).setInteractive().on('pointerdown', ()=>{(music.isPlaying) ? music.pause() : music.resume()});
+    this.add.text(window.innerWidth-410, 30, `Play/Resume`, { fontSize: '10px', fill: 'white', fontFamily: 'RetroFont' });
 
     //plataformas que se iran moviendo, quitamos gravedad y que no afecte la colision de un objeto
     platforms = this.physics.add.group({
@@ -211,14 +215,20 @@ function create() {
 function update() {
     if (win) {
         saveData_LS();
+        events_time.forEach((element)=>{element.remove()});
+        this.time.addEvent({delay: 3000, callback: ()=>{}, callbackScope: this, loop: true});
 
+        
         location.href = 'textRetro.html';
         obj = { value: 'Loading ...', page: 'secondScene.html' };
         localStorage.setItem('text', JSON.stringify(obj));
     };
     if (gameOver) {
         saveScore_LS();
+        events_time.forEach((element)=>{element.remove()});
+        this.time.addEvent({delay: 3000, callback: ()=>{}, callbackScope: this, loop: true});
 
+        
         location.href = 'textRetro.html';
         obj = { value: 'Game Over', page: 'menu.html' };
         localStorage.setItem('text', JSON.stringify(obj));
@@ -233,8 +243,8 @@ function update() {
             platform.destroy(); //eliminamos la plataforma
             plataformas.splice(index, 1); //la eliminamos del arreglo
             plataformas.push(platforms.create( //Crearemos una nueva plataforma 
-                Phaser.Math.Between((window.innerWidth / 2) + 200, window.innerWidth - 50),
-                Phaser.Math.Between(100, window.innerHeight - 300),
+                Phaser.Math.Between((window.innerWidth / 2) + 300, window.innerWidth),
+                Phaser.Math.Between(100, window.innerHeight - 350),
                 'platform').setScale(Phaser.Math.Between(.7, 1))
             );
         }
