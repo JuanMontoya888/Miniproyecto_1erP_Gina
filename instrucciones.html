@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="/styles/estilos.css">
+    <style>
+        @font-face {
+            font-family: 'RetroFont';
+            src: url(./fonts/PressStart2P-Regular.ttf) format('truetype');
+        }
+
+        body {
+            font-family: 'RetroFont';
+            overflow-x: hidden;
+        }
+
+        .instrucciones {
+            width: 70vw;
+            padding: 2rem;
+            text-align: justify;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            border-radius: 15px;
+            border: 2px dotted black;
+            background-color: rgba(204, 193, 193, 0.137);
+
+            
+            img {
+                border: 2px dotted black;
+                background-color: rgba(63, 90, 179, 0.1);
+
+                height: 100px;
+                width: auto;
+            }
+
+            h2 {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="regreso">
+        <img src="media/-3-11-2025.png" class="flecha_regreso" onclick="location.href='menu.html'">
+    </div>
+    <!-- menu principal -->
+
+    <div class="menu" id="menu">
+        <div class="menu_titulo">
+            <img src="media/Instrucciones-16-3-2025.png" class="img_menu"">
+        </div>
+        <div class=" instrucciones">
+            <h2>
+                Primera Escena
+            </h2>
+            <p>Movimiento: Utiliza las flechas del teclado (arriba, abajo, izquierda, derecha) para mover al personaje
+                por la pantalla.</p>
+
+            <div>
+                <img src="/media/personaje2.png" alt="">
+                <img src="media/teclas.png" alt="">
+            </div>
+            <p>Recolección de monedas: Recolecta las monedas que aparecen en la pantalla. Un nuevo item aparecerá cada 8
+                segundos para que puedas recogerlo.</p>
+            <div>
+                <img src="media/personaje2.png" alt="">
+                <img src="media/star.png" alt="">
+            </div>
+            <p>Recolección de item especial: Recolecta los item especiales que aparecen en la pantalla. Un nuevo item
+                aparecerá cada 20
+                segundos para que puedas recogerlo.</p>
+            <div>
+                <img src="media/personaje2.png" alt="">
+                <img src="media/itemEsp.png" alt="">
+            </div>
+            <p>Disparo: Presiona la barra espaciadora para disparar y eliminar obstáculos o enemigos.</p>
+            <div>
+                <img src="media/personaje2.png" alt="">
+                <img src="media/bullet.png" alt="">
+                <img src="media/enemigo.png" alt="">
+            </div>
+
+            <h2>
+                Segunda Escena
+            </h2>
+            <p>Movimiento: Usa las flechas del teclado para mover al personaje y esquivar los ataques que se lancen
+                hacia
+                él y contrataca.</p>
+            <div>
+                <img src="media/nave.png" alt="">
+                <img src="media/fire.png" alt="">
+                <img src="media/enemigo2.png" alt="">
+            </div>
+
+            <p>Objetivo: Elimina al jefe final.</p>
+            <img src="media/enemigo2.png" alt="">
+
+
+        </div>
+    </div>
+
+    <script src="functions/menu.js"></script>
+
+</body>
+
+</html>

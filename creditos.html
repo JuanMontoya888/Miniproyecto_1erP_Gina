@@ -7,14 +7,26 @@
     <title>CREDITOS</title>
     <link rel="stylesheet" href="/styles/estilos.css">
     <style>
-        body{
-            overflow: auto;
+        body {
             display: flex;
-            flex-direction: start;
-            .menu_creditos{
+            flex-direction: column;
+            align-items: center;
+
+            .menu {
+                width: 70vw;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+
+                .names{
+                    display: flex;
+
+                    div{
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+                }
             }
 
         }
@@ -28,19 +40,27 @@
     <!-- menu principal -->
 
     <div class="menu" id="menu">
-        <div class="menu_creditos">
-            <img src="media/CREDITOS-15-3-2025.png" class="img_menu"">
-            <div class="names"></div>
-            <img src="media/Juan-Mauricio-Montoya-Martinez-15-3-2025.png" class="img_menu"">
-            <img src="media/Tomas-Alberto-Alegria-Martinez-15-3-2025.png" class="img_menu"">
-            <img src="media/TECNOLOGIAS-WEB-15-3-2025.png" class="img_menu"">
-            <img src="media/ISC-6-A-15-3-2025.png" class="img_menu"">
-            <img src="media/15-MAR-2025-15-3-2025.png" class="img_menu"">
+        <img src="media/CREDITOS-15-3-2025.png" class="img_menu">
 
+        <div class="names">
+            <div>
+                <img src="media/Juan-Mauricio-Montoya-Martinez-15-3-2025.png" class="img_menu">
+                <img src="media/imgJuan.jpg" alt="" style="height: 200px; border-radius: 20px;">
+            </div>
+
+            <div>
+                <img src=" media/Tomas-Alberto-Alegria-Martinez-15-3-2025.png" class="img_menu">
+                <img src="media/imgTomas.jpg" alt="" style="height: 200px; border-radius: 20px;">
+            </div>
         </div>
+
+        <img src=" media/TECNOLOGIAS-WEB-15-3-2025.png" class="img_menu"">
+        <img src=" media/ISC-6-A-15-3-2025.png" class="img_menu"">
+        <img src=" media/15-MAR-2025-15-3-2025.png" class="img_menu"">
+
     </div>
 
-    <script src="functions/menu.js"></script>
+    <script src=" functions/menu.js"></script>
 
 </body>
 
