@@ -37,12 +37,11 @@ body {
 }
 
 .abecedario {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); 
   gap: 1em;
   justify-content: center;
   align-items: center;
-  flex-direction: row;
   width: 70%;
 }
 
